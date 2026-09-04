@@ -1,24 +1,16 @@
 {
   "name": "cse340",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Service Projects website for CSE 340",
+  "type": "module",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ashworks-l/cse340.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/ashworks-l/cse340/issues"
-  },
-  "homepage": "https://github.com/ashworks-l/cse340#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0"
   }
 }
