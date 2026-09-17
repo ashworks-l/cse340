@@ -137,3 +137,68 @@ VALUES
  'Support a community charity event through volunteer activities and organization.',
  'Community Center',
  '2026-10-20');
+ 
+ -- ========================================
+-- Category Table
+-- ========================================
+
+CREATE TABLE category (
+    category_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+
+-- ========================================
+-- Service Project Category Table
+-- ========================================
+
+CREATE TABLE service_project_category (
+    project_id INT NOT NULL,
+    category_id INT NOT NULL,
+
+    PRIMARY KEY (project_id, category_id),
+
+    CONSTRAINT fk_project
+        FOREIGN KEY (project_id)
+        REFERENCES service_project(project_id),
+
+    CONSTRAINT fk_category
+        FOREIGN KEY (category_id)
+        REFERENCES category(category_id)
+);
+
+
+-- ========================================
+-- Insert sample data: Categories
+-- ========================================
+
+INSERT INTO category (name)
+VALUES
+('Environmental'),
+('Education'),
+('Community Support'),
+('Food and Sustainability'),
+('Donations');
+
+
+-- ========================================
+-- Associate Service Projects with Categories
+-- ========================================
+
+INSERT INTO service_project_category (project_id, category_id)
+VALUES
+(1, 3),
+(2, 3),
+(3, 1),
+(4, 2),
+(5, 3),
+(6, 4),
+(7, 4),
+(8, 4),
+(9, 2),
+(10, 1),
+(11, 5),
+(12, 3),
+(13, 5),
+(14, 1),
+(15, 3);
