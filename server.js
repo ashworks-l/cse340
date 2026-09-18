@@ -30,12 +30,18 @@ app.get("/", (req, res) => {
 
 // Organizations page
 app.get("/organizations", async (req, res) => {
+
     const organizations = await getAllOrganizations();
+
     console.log(organizations);
 
     const title = "Our Partner Organizations";
 
-    res.render("organizations", { title });
+    res.render("organizations", {
+        title,
+        organizations
+    });
+
 });
 
 // Service Projects page
