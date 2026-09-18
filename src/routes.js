@@ -7,7 +7,11 @@ import {
     showOrganizationDetailsPage
 } from './controllers/organizations.js';
 
-import { showProjectsPage } from './controllers/projects.js';
+import {
+    showProjectsPage,
+    showProjectDetailsPage
+} from './controllers/projects.js';
+
 import { showCategoriesPage } from './controllers/categories.js';
 import { testErrorPage } from './controllers/errors.js';
 
@@ -26,5 +30,8 @@ router.get('/test-error', testErrorPage);
 
 // Organization details route
 router.get('/organization/:id', showOrganizationDetailsPage);
+
+// Service project details route
+router.get('/project/:id', showProjectDetailsPage);
 
 export default router;
