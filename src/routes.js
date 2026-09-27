@@ -5,7 +5,8 @@ import { showHomePage } from './controllers/index.js';
 import {
     showOrganizationsPage,
     showOrganizationDetailsPage,
-    processNewOrganizationForm
+    processNewOrganizationForm,
+    organizationValidation
 } from './controllers/organizations.js';
 
 import {
@@ -26,13 +27,14 @@ router.get('/', showHomePage);
 
 router.get('/organizations', showOrganizationsPage);
 
-router.get('/new-organization', (req, res) => {
+router.get('/new-organizations', (req, res) => {
     res.render('new-organization', {
         title: 'Add Organization'
     });
 });
 
-router.post('/new-organizations', processNewOrganizationForm);
+router.post('/new-organizations', 
+    organizationValidation , processNewOrganizationForm);
 
 router.get('/service-projects', showProjectsPage);
 
