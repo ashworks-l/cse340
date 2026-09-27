@@ -1,0 +1,46 @@
+<%- include("partials/header") %>
+
+<section class="page-header">
+    <p class="eyebrow">GET INVOLVED</p>
+    <h1>Add a New Organization</h1>
+    <p>Enter the information for the new community organization.</p>
+</section>
+
+<section class="section">
+    <form action="/new-organizations" method="POST">
+
+        <div class="form-group">
+            <label for="name">Organization Name</label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+                id="description"
+                name="description"
+                required
+            ></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="contactEmail">Contact Email</label>
+            <input
+                type="email"
+                id="contactEmail"
+                name="contactEmail"
+                required
+            >
+        </div>
+
+        <button type="submit">Create Organization</button>
+
+    </form>
+</section>
+
+<%- include("partials/footer") %>

@@ -34,4 +34,34 @@ const getOrganizationDetails = async (organizationId) => {
     return result.rows.length > 0 ? result.rows[0] : null;
 };
 
-export { getAllOrganizations, getOrganizationDetails };
+const createOrganization = async (
+    name,
+    description,
+    contactEmail,
+    logoFilename
+) => {
+    const query = `
+        INSERT INTO public.organization
+            (name, description, contact_email, logo_filename)
+        VALUES
+            ($1, $2, $3, $4)
+        RETURNING organization_id;
+    `;
+
+    const queryParams = [
+        name,
+        description,
+        contactEmail,
+        logoFilename
+    ];
+
+    const result = await db.query(query, queryParams);
+
+    return result.rows[0].organization_id;
+};
+
+export {
+    getAllOrganizations,
+    getOrganizationDetails,
+    createOrganization
+};
