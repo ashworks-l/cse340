@@ -13,12 +13,17 @@ import {
 
 import {
     showProjectsPage,
-    showProjectDetailsPage
+    showProjectDetailsPage,
+    showNewProjectForm,
+    processNewProjectForm,
+    projectValidation
 } from './controllers/projects.js';
 
 import {
     showCategoriesPage,
-    showCategoryDetailsPage
+    showCategoryDetailsPage,
+    showAssignCategoriesForm,
+    processAssignCategoriesForm
 } from './controllers/categories.js';
 
 import { testErrorPage } from './controllers/errors.js';
@@ -56,9 +61,29 @@ router.post(
 
 router.get('/service-projects', showProjectsPage);
 
+// New service project form
+router.get('/new-project', showNewProjectForm);
+
+// Process new service project form
+router.post(
+    '/new-project',
+    projectValidation,
+    processNewProjectForm
+);
+
 router.get('/service-projects/:id', showProjectDetailsPage);
 
 router.get('/categories', showCategoriesPage);
+
+router.get(
+    '/assign-categories/:projectId',
+    showAssignCategoriesForm
+);
+
+router.post(
+    '/assign-categories/:projectId',
+    processAssignCategoriesForm
+);
 
 router.get('/category/:id', showCategoryDetailsPage);
 
