@@ -16,7 +16,9 @@ import {
     showProjectDetailsPage,
     showNewProjectForm,
     processNewProjectForm,
-    projectValidation
+    projectValidation,
+    showEditProjectForm,
+    processEditProjectForm
 } from './controllers/projects.js';
 
 import {
@@ -72,6 +74,16 @@ router.post(
 );
 
 router.get('/service-projects/:id', showProjectDetailsPage);
+
+router.get(
+    '/edit-project/:id',
+    showEditProjectForm
+);
+
+router.post(
+    '/edit-project/:id',
+    processEditProjectForm
+);
 
 router.get('/categories', showCategoriesPage);
 

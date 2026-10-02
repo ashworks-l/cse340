@@ -9,6 +9,12 @@
         <h2><%= project.title %></h2>
 
         <p>
+            <a href="/edit-project/<%= project.project_id %>">
+                Edit Project
+            </a>
+        </p>
+
+        <p>
             <strong>Description:</strong>
             <%= project.description %>
         </p>
