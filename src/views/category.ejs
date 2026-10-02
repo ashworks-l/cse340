@@ -7,6 +7,11 @@
     <% if (category) { %>
 
         <h2><%= category.name %></h2>
+        <p>
+            <a href="/edit-category/<%= category.category_id %>">
+                Edit Category
+            </a>
+        </p>
 
         <h3>Service Projects</h3>
 
