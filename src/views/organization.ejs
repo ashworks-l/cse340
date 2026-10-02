@@ -1,13 +1,15 @@
 <%- include('partials/header') %>
 
 <main>
+
     <h1><%= title %></h1>
 
     <% if (organizationDetails) { %>
-        
+
         <h2><%= organizationDetails.name %></h2>
 
-        <img class="organization-logo"
+        <img
+            class="organization-logo"
             src="/images/<%= organizationDetails.logo_filename %>"
             alt="<%= organizationDetails.name %> logo"
         >
@@ -28,24 +30,37 @@
             </a>
         </p>
 
-        
+        <p>
+            <a href="/categories">
+                View Service Categories
+            </a>
+        </p>
+
         <h3>Service Projects</h3>
 
         <% if (projects.length > 0) { %>
 
             <ul>
+
                 <% projects.forEach(project => { %>
+
                     <li>
+
                         <a href="/project/<%= project.project_id %>">
                             <%= project.title %>
                         </a>
+
                     </li>
+
                 <% }); %>
+
             </ul>
 
         <% } else { %>
 
-            <p>No service projects are currently available.</p>
+            <p>
+                No service projects are currently available.
+            </p>
 
         <% } %>
 
@@ -64,6 +79,7 @@
         </p>
 
     <% } %>
+
 </main>
 
 <%- include('partials/footer') %>
