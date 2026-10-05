@@ -28,6 +28,11 @@ app.use(session({
     cookie: { maxAge: 60 * 60 * 1000 }
 }));
 
+app.use((req, res, next) => {
+    res.locals.isLoggedIn = !!req.session.user;
+    next();
+});
+
 app.use(flash);
 
 app.use(express.urlencoded({ extended: true }));
