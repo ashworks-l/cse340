@@ -25,7 +25,9 @@ app.use(session({
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 60 * 60 * 1000 }
+    cookie: { maxAge: 60 * 60 * 1000, 
+        secure: NODE_ENV === 'production'
+    }
 }));
 
 app.use((req, res, next) => {
