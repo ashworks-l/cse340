@@ -1,7 +1,6 @@
 <%- include("partials/header") %>
 
 <section class="page-header">
-
     <p class="eyebrow">OUR COMMUNITY</p>
 
     <h1>Organizations</h1>
@@ -11,16 +10,16 @@
         to serve and strengthen our communities.
     </p>
 
-    <p>
-        <a href="/new-organizations">
-            Add New Organization
-        </a>
-    </p>
-
+    <% if (user && user.role_name === 'admin') { %>
+        <p>
+            <a href="/new-organization">
+                Add New Organization
+            </a>
+        </p>
+    <% } %>
 </section>
 
 <section class="section">
-
     <div class="organization-grid">
 
         <% if (organizations && organizations.length > 0) { %>
@@ -73,7 +72,6 @@
         <% } %>
 
     </div>
-
 </section>
 
 <%- include("partials/footer") %>
