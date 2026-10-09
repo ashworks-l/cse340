@@ -1,3 +1,4 @@
+
 import bcrypt from 'bcrypt';
 import db from './db.js';
 
@@ -7,17 +8,16 @@ const createUser = async (name, email, passwordHash) => {
     const query = `
         INSERT INTO users
             (name, email, password_hash, role_id)
-        VALUES
+        VALUES (
+            $1,
+            $2,
+            $3,
             (
-                $1,
-                $2,
-                $3,
-                (
-                    SELECT role_id
-                    FROM roles
-                    WHERE role_name = $4
-                )
+                SELECT role_id
+                FROM roles
+                WHERE role_name = $4
             )
+        )
         RETURNING user_id;
     `;
 
@@ -68,20 +68,11 @@ const findUserByEmail = async (email) => {
     return result.rows[0];
 };
 
-const verifyPassword = async (
-    password,
-    passwordHash
-) => {
-    return bcrypt.compare(
-        password,
-        passwordHash
-    );
+const verifyPassword = async (password, passwordHash) => {
+    return bcrypt.compare(password, passwordHash);
 };
 
-const authenticateUser = async (
-    email,
-    password
-) => {
+const authenticateUser = async (email, password) => {
     const user = await findUserByEmail(email);
 
     if (!user) {
@@ -102,10 +93,27 @@ const authenticateUser = async (
     return user;
 };
 
+const getAllUsers = async () => {
+    const query = `
+        SELECT
+            u.user_id,
+            u.name,
+            u.email,
+            r.role_name
+        FROM users AS u
+        JOIN roles AS r
+            ON u.role_id = r.role_id
+        ORDER BY u.user_id ASC;
+    `;
+
+    const result = await db.query(query);
+
+    return result.rows;
+};
+
 export {
     createUser,
     findUserByEmail,
     authenticateUser,
-    getAllUsers,
-
+    getAllUsers
 };
