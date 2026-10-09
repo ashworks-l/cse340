@@ -1,9 +1,8 @@
 import bcrypt from 'bcrypt';
 import db from './db.js';
 
-// Create a new user with the default "user" role
 const createUser = async (name, email, passwordHash) => {
-    const defaultRole = 'user';
+    const default_role = 'user';
 
     const query = `
         INSERT INTO users
@@ -26,7 +25,7 @@ const createUser = async (name, email, passwordHash) => {
         name,
         email,
         passwordHash,
-        defaultRole
+        default_role
     ];
 
     const result = await db.query(query, queryParams);
@@ -45,7 +44,6 @@ const createUser = async (name, email, passwordHash) => {
     return result.rows[0].user_id;
 };
 
-// Find one user by email, including their role
 const findUserByEmail = async (email) => {
     const query = `
         SELECT
@@ -53,6 +51,7 @@ const findUserByEmail = async (email) => {
             u.name,
             u.email,
             u.password_hash,
+            u.role_id,
             r.role_name
         FROM users AS u
         JOIN roles AS r
@@ -69,32 +68,20 @@ const findUserByEmail = async (email) => {
     return result.rows[0];
 };
 
-// Get all registered users and their roles
-const getAllUsers = async () => {
-    const query = `
-        SELECT
-            u.user_id,
-            u.name,
-            u.email,
-            r.role_name
-        FROM users AS u
-        JOIN roles AS r
-            ON u.role_id = r.role_id
-        ORDER BY u.name ASC;
-    `;
-
-    const result = await db.query(query);
-
-    return result.rows;
+const verifyPassword = async (
+    password,
+    passwordHash
+) => {
+    return bcrypt.compare(
+        password,
+        passwordHash
+    );
 };
 
-// Verify the user's password
-const verifyPassword = async (password, passwordHash) => {
-    return bcrypt.compare(password, passwordHash);
-};
-
-// Authenticate a user
-const authenticateUser = async (email, password) => {
+const authenticateUser = async (
+    email,
+    password
+) => {
     const user = await findUserByEmail(email);
 
     if (!user) {
@@ -110,7 +97,6 @@ const authenticateUser = async (email, password) => {
         return null;
     }
 
-    // Never store the password hash in the session user object
     delete user.password_hash;
 
     return user;
@@ -119,6 +105,7 @@ const authenticateUser = async (email, password) => {
 export {
     createUser,
     findUserByEmail,
+    authenticateUser,
     getAllUsers,
-    authenticateUser
+
 };
