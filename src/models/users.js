@@ -51,18 +51,15 @@ const findUserByEmail = async (email) => {
             u.name,
             u.email,
             u.password_hash,
+            u.role_id,
             r.role_name
-        FROM users u
-        JOIN roles r ON u.role_id = r.role_id
+        FROM users AS u
+        JOIN roles AS r
+            ON u.role_id = r.role_id
         WHERE u.email = $1;
     `;
 
-    const queryParams = [email];
-
-    const result = await db.query(
-        query,
-        queryParams
-    );
+    const result = await db.query(query, [email]);
 
     if (result.rows.length === 0) {
         return null;
@@ -107,5 +104,6 @@ const authenticateUser = async (
 
 export {
     createUser,
-    authenticateUser
+    authenticateUser,
+    getAllUsers
 };
