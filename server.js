@@ -1,104 +1,124 @@
+
 import "dotenv/config";
 import express from "express";
 import session from "express-session";
 import path from "path";
 import { fileURLToPath } from "url";
+
 import { testConnection } from "./src/models/db.js";
-import router from './src/routes.js';
+import router from "./src/routes.js";
 import flash from "./src/middleware/flash.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || "development";
 const SESSION_SECRET = process.env.SESSION_SECRET;
+
+if (!SESSION_SECRET) {
+    throw new Error("SESSION_SECRET is not configured.");
+}
+
+// Recognize the HTTPS connection through Render's proxy.
+if (NODE_ENV === "production") {
+    app.set("trust proxy", 1);
+}
 
 // View engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "src/views"));
 
+// Parse form submissions
+app.use(express.urlencoded({ extended: true }));
+
 // Session management
+app.use(
+    session({
+        name: "cse340.sid",
+        secret: SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 60 * 60 * 1000,
+            httpOnly: true,
+            secure: NODE_ENV === "production",
+            sameSite: "lax"
+        }
+    })
+);
 
-app.use(session({
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { maxAge: 60 * 60 * 1000, 
-        secure: NODE_ENV === 'production'
-    }
-}));
-
+// Make session information available to templates
 app.use((req, res, next) => {
-    res.locals.isLoggedIn = false;
+    res.locals.isLoggedIn = Boolean(
+        req.session && req.session.user
+    );
 
-    if (req.session && req.session.user) {
-        res.locals.isLoggedIn = true;
-    }
-
-    res.locals.user = req.session.user || null;
-
+    res.locals.user = req.session?.user || null;
     res.locals.NODE_ENV = NODE_ENV;
 
     next();
 });
 
+// Flash messages
 app.use(flash);
-
-app.use(express.urlencoded({ extended: true }));
 
 // Static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Middleware to log all incoming requests
+// Request logging in development
 app.use((req, res, next) => {
-    if (NODE_ENV === 'development') {
+    if (NODE_ENV === "development") {
         console.log(`${req.method} ${req.url}`);
     }
+
     next();
 });
 
-// Middleware to make NODE_ENV available to all templates
-app.use((req, res, next) => {
-    res.locals.NODE_ENV = NODE_ENV;
-    next();
-});
-
-// Use the imported router to handle routes
+// Application routes
 app.use(router);
 
-// Catch-all route for 404 errors
+// 404 handler
 app.use((req, res, next) => {
-    const err = new Error("Page Not Found");
-    err.status = 404;
-    next(err);
+    const error = new Error("Page Not Found");
+    error.status = 404;
+
+    next(error);
 });
 
 // Global error handler
 app.use((err, req, res, next) => {
     console.error("Error occurred:", err.message);
-    console.error("Stack trace:", err.stack);
+    console.error(err.stack);
+
+    if (res.headersSent) {
+        return next(err);
+    }
 
     const status = err.status || 500;
     const template = status === 404 ? "404" : "500";
 
-    const context = {
+    return res.status(status).render(`errors/${template}`, {
         title: status === 404 ? "Page Not Found" : "Server Error",
         error: err.message,
-        stack: err.stack
-    };
-
-    res.status(status).render(`errors/${template}`, context);
+        stack:
+            NODE_ENV === "development"
+                ? err.stack
+                : undefined
+    });
 });
 
 // Start server
 app.listen(PORT, async () => {
+    console.log(`Server listening on port ${PORT}`);
+    console.log(`Environment: ${NODE_ENV}`);
+
     try {
         await testConnection();
-        console.log(`Server is running at http://127.0.0.1:${PORT}`);
-        console.log(`Environment: ${NODE_ENV}`);
+        console.log("Database connection successful.");
     } catch (error) {
-        console.error("Error connecting to the database:", error);
+        console.error("Database connection failed:", error);
     }
 });
