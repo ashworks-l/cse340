@@ -10,6 +10,48 @@
 
     <p>Username: <%= email %></p>
 
+    <section class="dashboard-card">
+        <h2>My Volunteer Projects</h2>
+
+        <% if (volunteerProjects && volunteerProjects.length > 0) { %>
+            <% volunteerProjects.forEach((project) => { %>
+                <article>
+                    <h3><%= project.title %></h3>
+
+                    <p>
+                        <strong>Organization:</strong>
+                        <%= project.organization_name %>
+                    </p>
+
+                    <p>
+                        <strong>Location:</strong>
+                        <%= project.location %>
+                    </p>
+
+                    <p>
+                        <strong>Date:</strong>
+                        <%= project.date
+                            ? new Date(project.date).toLocaleDateString('en-GB')
+                            : 'Date not available' %>
+                    </p>
+
+                    <a href="/project/<%= project.project_id %>">
+                        View Project Details
+                    </a>
+
+                    <a href="/project/<%= project.project_id %>/remove-volunteer">
+                        Remove My Volunteer Signup
+                    </a>
+                </article>
+
+                <hr>
+            <% }); %>
+        <% } else { %>
+            <p>You have not signed up for any volunteer projects yet.</p>
+            <a href="/service-projects">Browse Service Projects</a>
+        <% } %>
+    </section>
+
     <% if (role_name === 'admin') { %>
         <section class="dashboard-card">
             <h2>User Management</h2>

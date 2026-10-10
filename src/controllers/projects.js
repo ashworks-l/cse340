@@ -45,12 +45,23 @@ const showProjectDetailsPage = async (req, res) => {
 
     const categories = await getCategoriesByProjectId(projectId);
 
+    let isVolunteering = false;
+
+    if (req.session.user) {
+        isVolunteering = await isUserVolunteering(
+            req.session.user.user_id,
+            projectId
+        );
+    }
+
     const title = 'Service Project Details';
 
     res.render('project', {
         title,
         project,
-        categories
+        categories,
+        isVolunteering,
+        isLoggedIn: Boolean(req.session.user)
     });
 };
 

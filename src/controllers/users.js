@@ -7,6 +7,10 @@ import {
     getAllUsers
 } from '../models/users.js';
 
+import {
+     getProjectsByVolunteerId 
+} from '../models/volunteers.js';
+
 const showUserRegistrationForm = (req, res) => {
     res.render('register', {
         title: 'Register'
@@ -121,16 +125,30 @@ const requireLogin = (req, res, next) => {
     return next();
 };
 
-const showDashboard = (req, res) => {
-    const user = req.session.user;
 
-    return res.render('dashboard', {
-        title: 'Dashboard',
-        name: user.name,
-        email: user.email,
-        role_name: user.role_name
-    });
+const showDashboard = async (req, res) => {
+    try {
+        const user = req.session.user;
+
+        const volunteerProjects = await getProjectsByVolunteerId(
+            user.user_id
+        );
+
+        return res.render('dashboard', {
+            title: 'Dashboard',
+            name: user.name,
+            email: user.email,
+            role_name: user.role_name,
+            volunteerProjects
+        });
+    } catch (error) {
+        console.error('Error loading dashboard:', error);
+        return res.status(500).render('500', {
+            title: 'Server Error'
+        });
+    }
 };
+
 
 const showUsersPage = async (req, res) => {
     try {
