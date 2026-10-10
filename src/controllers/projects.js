@@ -15,6 +15,12 @@ import {
     getAllOrganizations
 } from '../models/organizations.js';
 
+import {
+    addVolunteer,
+    removeVolunteer,
+    isUserVolunteering
+} from '../models/volunteers.js';
+
 const NUMBER_OF_UPCOMING_PROJECTS = 5;
 
 // Show all upcoming projects
@@ -220,6 +226,56 @@ const processNewProjectForm = async (req, res) => {
     }
 };
 
+const volunteerForProject = async (req, res) => {
+    const userId = req.session.user.user_id;
+    const projectId = req.params.id;
+
+    try {
+        await addVolunteer(userId, projectId);
+
+        req.flash(
+            'success',
+            'You are now volunteering for this project.'
+        );
+
+        res.redirect(`/project/${projectId}`);
+    } catch (error) {
+        console.error('Error volunteering for project:', error);
+
+        req.flash(
+            'error',
+            'Unable to sign up for this project.'
+        );
+
+        res.redirect(`/project/${projectId}`);
+    }
+};
+
+const removeVolunteerFromProject = async (req, res) => {
+    const userId = req.session.user.user_id;
+    const projectId = req.params.id;
+
+    try {
+        await removeVolunteer(userId, projectId);
+
+        req.flash(
+            'success',
+            'You are no longer volunteering for this project.'
+        );
+
+        res.redirect(`/project/${projectId}`);
+    } catch (error) {
+        console.error('Error removing volunteer:', error);
+
+        req.flash(
+            'error',
+            'Unable to remove your volunteer signup.'
+        );
+
+        res.redirect(`/project/${projectId}`);
+    }
+};
+
 export {
     showProjectsPage,
     showProjectDetailsPage,
@@ -227,5 +283,7 @@ export {
     processNewProjectForm,
     projectValidation,
     showEditProjectForm,
-    processEditProjectForm
+    processEditProjectForm,
+    volunteerForProject,
+    removeVolunteerFromProject  
 };

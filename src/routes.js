@@ -18,7 +18,9 @@ import {
     processNewProjectForm,
     projectValidation,
     showEditProjectForm,
-    processEditProjectForm
+    processEditProjectForm,
+    volunteerForProject,
+    removeVolunteerFromProject
 } from './controllers/projects.js';
 
 import {
@@ -76,6 +78,7 @@ router.get('/organizations', showOrganizationsPage);
 // Create organization
 router.get(
     '/new-organization',
+    requireLogin,
     requireRole('admin'),
     (req, res) => {
         res.render('new-organization', {
@@ -83,7 +86,6 @@ router.get(
         });
     }
 );
-
 router.post(
     '/new-organization',
     requireRole('admin'),
@@ -204,5 +206,17 @@ router.get(
 
 // Error testing
 router.get('/test-error', testErrorPage);
+
+router.get(
+    '/project/:id/volunteer',
+    requireLogin,
+    volunteerForProject
+);
+
+router.get(
+    '/project/:id/remove-volunteer',
+    requireLogin,
+    removeVolunteerFromProject
+);
 
 export default router;
